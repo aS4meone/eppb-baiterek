@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --navy: #0b1730; --navy2: #102343; --blue: #2a63b8; --blue-l: #7fa9e0;
+    --gold: #c9a227; --gold-l: #ddb95f; --slate: #64748b; --line: #e2e8f0;
+  }
+  body { font-family: 'Manrope', sans-serif; color: #1e293b; }
+  .slide {
+    width: 1280px; height: 720px; page-break-after: always;
+    position: relative; overflow: hidden; background: #fff;
+    padding: 64px 72px; display: flex; flex-direction: column;
+  }
+  .dark { background: radial-gradient(900px 500px at 80% 10%, #1d4d99 0%, transparent 60%), var(--navy); color: #fff; }
+  .kicker { font-size: 15px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); }
+  .dark .kicker { color: var(--gold-l); }
+  h1 { font-size: 54px; font-weight: 800; line-height: 1.08; letter-spacing: -0.02em; margin-top: 14px; }
+  h2 { font-size: 40px; font-weight: 800; letter-spacing: -0.02em; margin-top: 10px; color: var(--navy2); }
+  .dark h2 { color: #fff; }
+  .sub { font-size: 19px; color: var(--slate); margin-top: 12px; line-height: 1.5; max-width: 900px; }
+  .dark .sub { color: #b6c2d6; }
+  .cols { display: flex; gap: 36px; margin-top: 38px; flex: 1; align-items: flex-start; }
+  .col { flex: 1; }
+  .cardbox { border: 1px solid var(--line); border-radius: 18px; padding: 22px 24px; }
+  .dark .cardbox { border-color: rgba(255,255,255,.14); background: rgba(255,255,255,.05); }
+  .cardbox h3 { font-size: 18px; font-weight: 800; color: var(--navy2); }
+  .dark .cardbox h3 { color: #fff; }
+  .cardbox p { font-size: 14.5px; color: var(--slate); line-height: 1.5; margin-top: 6px; }
+  .dark .cardbox p { color: #b6c2d6; }
+  .num { font-size: 46px; font-weight: 800; color: var(--navy2); letter-spacing: -0.02em; }
+  .dark .num { color: var(--gold-l); }
+  .shot { border-radius: 14px; border: 1px solid var(--line); box-shadow: 0 18px 50px rgba(16,35,67,.18); width: 100%; }
+  .foot { position: absolute; bottom: 26px; left: 72px; right: 72px; display: flex; justify-content: space-between; font-size: 12.5px; color: #94a3b8; font-weight: 600; }
+  .dark .foot { color: #5c6b84; }
+  ul.big { margin-top: 26px; }
+  ul.big li { list-style: none; display: flex; gap: 14px; font-size: 19px; line-height: 1.45; margin-bottom: 18px; }
+  ul.big li::before { content: ""; flex: none; width: 9px; height: 9px; border-radius: 99px; background: var(--gold); margin-top: 9px; }
+  .tag { display: inline-block; background: #eef4fc; color: #173d7a; font-size: 13px; font-weight: 800; padding: 5px 12px; border-radius: 99px; margin: 0 6px 8px 0; }
+  .dark .tag { background: rgba(255,255,255,.1); color: #e8cd8a; }
+  .flow { display: flex; align-items: center; gap: 10px; margin-top: 30px; }
+  .flow .n { background: #eef4fc; border: 1px solid #d9e6f7; color: #173d7a; padding: 14px 18px; border-radius: 14px; font-size: 15px; font-weight: 700; text-align: center; flex: 1; }
+  .flow .a { color: var(--gold); font-size: 22px; font-weight: 800; }
+</style>
+</head>
+<body>
+
+<!-- 1. Титул -->
+<section class="slide dark" style="justify-content: center;">
+  <div class="kicker">Технологический конкурс Astana Hub · АО «НУХ «Байтерек»</div>
+  <h1 style="font-size: 62px; max-width: 1000px;">Единый портал<br>поддержки бизнеса</h1>
+  <p class="sub" style="font-size: 23px; margin-top: 22px;">MVP платформы на базе универсального no-code конструктора услуг.<br>Услуга Холдинга — это данные, а не код.</p>
+  <div style="margin-top: 44px;">
+    <span class="tag">Next.js 16</span><span class="tag">Конструктор форм</span><span class="tag">AI-подбор и AI-генерация схем</span><span class="tag">Карта проектов</span><span class="tag">eGov / ЭЦП / BPM (мок)</span>
+  </div>
+  <div class="foot"><span>ЕППБ · MVP</span><span>2026</span></div>
+</section>
+
+<!-- 2. Проблема -->
+<section class="slide">
+  <div class="kicker">Проблема — мы изучили текущие порталы группы</div>
+  <h2>«Единый» портал сегодня — это каталог ссылок</h2>
+  <div class="cols">
+    <div class="col cardbox">
+      <div class="num">40+</div>
+      <h3>полей в одной анкете</h3>
+      <p>Плоские формы без шагов и ветвлений: у полей действующего портала condition = null, rules = null. Пользователь видит все вопросы сразу — даже нерелевантные.</p>
+    </div>
+    <div class="col cardbox">
+      <div class="num">≠</div>
+      <h3>подача уводит в CRM дочек</h3>
+      <p>Кнопка «Подать заявку» по сложным услугам — внешний редирект в систему дочерней организации. У каждой — своя. Единого кабинета и сквозных статусов нет.</p>
+    </div>
+    <div class="col cardbox">
+      <div class="num">PNG</div>
+      <h3>условия услуг — картинками</h3>
+      <p>Условия финансирования вставлены изображениями: не ищутся поиском, не читаются с телефона. Терминология без объяснений: «КТ/БВУ/МФО/РИЦ», «ГЭСВ».</p>
+    </div>
+  </div>
+  <p class="sub" style="margin-top: 26px;"><b style="color:#102343">Главное:</b> каждая новая мера поддержки требует отдельной разработки. Запуск услуги = проект с программистами.</p>
+  <div class="foot"><span>ЕППБ · MVP</span><span>02</span></div>
+</section>
+
+<!-- 3. Решение -->
+<section class="slide dark">
+  <div class="kicker">Решение</div>
+  <h2>Услуга = JSON-схема. Портал = движок схем</h2>
+  <p class="sub">Каждая мера поддержки описывается декларативной схемой: этапы → шаги → поля → условия видимости → формулы → документы. Один движок рендерит её и предпринимателю, и автору услуги.</p>
+  <div class="flow">
+    <div class="n">Автор услуги<br>собирает схему в конструкторе</div>
+    <div class="a">→</div>
+    <div class="n">Схема сохраняется в БД<br>(services, версии)</div>
+    <div class="a">→</div>
+    <div class="n">Wizard рендерит клиентский путь<br>по той же схеме</div>
+    <div class="a">→</div>
+    <div class="n">Заявка уходит в BPM дочки<br>через интеграционную шину</div>
+  </div>
+  <div class="cols" style="margin-top: 34px;">
+    <div class="col cardbox"><h3>0 строк кода на новую услугу</h3><p>Публикация из конструктора — услуга сразу в каталоге, поиске, AI-подборе и личном кабинете.</p></div>
+    <div class="col cardbox"><h3>Ни одной захардкоженной формы</h3><p>Обе контрольные услуги конкурса — записи в БД, собранные конструктором, а не страницы в коде.</p></div>
+    <div class="col cardbox"><h3>Одна валидация — клиент и сервер</h3><p>Движок условий и формул общий: сервер повторяет проверки по той же схеме. Без расхождений.</p></div>
+  </div>
+  <div class="foot"><span>ЕППБ · MVP</span><span>03</span></div>
+</section>
+
+<!-- 4. Конструктор -->
+<section class="slide">
+  <div class="kicker">Административный конструктор</div>
+  <h2>Бизнес-аналитик собирает услугу сам</h2>
+  <div class="cols">
+    <div class="col" style="flex: 1.5;"><img class="shot" src="img/builder.png"></div>
+    <div class="col">
+      <ul class="big" style="margin-top: 6px;">
+        <li>15 типов полей: от ИИН/БИН до расчётных и инфоблоков</li>
+        <li>Условия «показывать если» — ветвление без кода</li>
+        <li>Формулы: аванс, суммы, проценты считаются на лету</li>
+        <li>Этапность: I этап — индикативная заявка, II — документы</li>
+        <li>Живой предпросмотр тем же движком, что видит клиент</li>
+        <li>Черновик → публикация → версионирование схем</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>ЕППБ · MVP</span><span>04</span></div>
+</section>
+
+<!-- 5. AI -->
+<section class="slide">
+  <div class="kicker">AI-компонент — практическая ценность, не «чатбот ради чатбота»</div>
+  <h2>AI работает на обе стороны портала</h2>
+  <div class="cols">
+    <div class="col cardbox">
+      <h3>Для предпринимателя: подбор услуги</h3>
+      <p>«Хочу купить 20 полувагонов» → AI-помощник находит меру поддержки, объясняет условия простым языком и ведёт к подаче. Доступен на каждом экране.</p>
+    </div>
+    <div class="col cardbox">
+      <h3>Для автора услуги: генерация схемы</h3>
+      <p>Вставьте текст программы или НПА — AI построит черновик формы: шаги, поля, ветвления, расчёты, документы. Автору остаётся доработать и опубликовать.</p>
+    </div>
+    <div class="col cardbox">
+      <h3>Для качества заявок</h3>
+      <p>Подсказки в полях, предзаполнение из eGov и ГБД, валидация на каждом шаге — меньше ошибок и возвратов «на доработку».</p>
+    </div>
+  </div>
+  <p class="sub" style="margin-top: 24px;">Провайдеро-независимый слой: OpenAI / Anthropic по ключу в конфигурации + rule-based фолбэк — демо работает даже без внешнего AI. Не дублирует действующий чат-бот Холдинга: AI встроен в клиентский путь и конструктор.</p>
+  <div class="foot"><span>ЕППБ · MVP</span><span>05</span></div>
+</section>
+
+<!-- 6. Клиентский путь -->
+<section class="slide">
+  <div class="kicker">Клиентский путь</div>
+  <h2>Сложная услуга — как понятный пошаговый сценарий</h2>
+  <div class="cols">
+    <div class="col" style="flex: 1.5;"><img class="shot" src="img/wizard.png"></div>
+    <div class="col">
+      <ul class="big" style="margin-top: 6px;">
+        <li>Шаги вместо анкеты на 40 полей: понятно, где ты и что дальше</li>
+        <li>Прогресс и автосохранение черновика</li>
+        <li>ФИО и компания предзаполнены из eGov-профиля</li>
+        <li>Ввёл БИН — данные подтянулись из ГБД «Юрлица»</li>
+        <li>Нерелевантные вопросы скрыты ветвлением</li>
+        <li>Аванс и сумма финансирования считаются на лету</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>ЕППБ · MVP</span><span>06</span></div>
+</section>
+
+<!-- 7. Контрольный кейс -->
+<section class="slide dark">
+  <div class="kicker">Контрольный кейс конкурса</div>
+  <h2>Обе услуги собраны в конструкторе</h2>
+  <div class="cols">
+    <div class="col cardbox">
+      <h3>«Приобретение вагонов в лизинг» — сложная, 2 этапа</h3>
+      <p>I этап: индикативная заявка (3 шага, 20+ полей). Ветвление по типу заявителя, типу подвижного состава (цистерны → вопрос о грузе), опыту компании. Расчёт стоимости проекта, аванса и финансирования формулами схемы.<br><br>II этап открывается после предодобрения: финансовое состояние, обеспечение, документы, подписание ЭЦП.</p>
+    </div>
+    <div class="col cardbox">
+      <h3>«Агробизнес — животноводство» — популярная</h3>
+      <p>Ветвление по типу заёмщика: прямой заёмщик видит ставку 5% и поля про поголовье, КТ/БВУ/МФО — ставку 1,5% и отчёт о портфеле. Условия объяснены инфоблоками простым языком.<br><br>Разный состав документов по направлениям (откормочная площадка / птицефабрика) — тоже условиями схемы.</p>
+    </div>
+  </div>
+  <p class="sub" style="margin-top: 24px;">Жизненный цикл виден в личном кабинете: подача → рассмотрение в BPM (мок) → предодобрение → II этап → одобрение. Статусы, история, уведомления, документы — в одном месте.</p>
+  <div class="foot"><span>ЕППБ · MVP</span><span>07</span></div>
+</section>
+
+<!-- 8. Экосистема -->
+<section class="slide">
+  <div class="kicker">Не только заявки</div>
+  <h2>Цифровая среда для предпринимателя</h2>
+  <div class="cols">
+    <div class="col" style="flex: 1.4;"><img class="shot" src="img/map.png"></div>
+    <div class="col">
+      <ul class="big" style="margin-top: 6px;">
+        <li><b>Карта проектов:</b> 25 профинансированных проектов, фильтры по дочке/отрасли/статусу, агрегация по регионам, карточка проекта</li>
+        <li><b>Аналитическая отчётность дочек:</b> каталог отчётов и дашбордов с источником и периодом, переход или embedding</li>
+        <li><b>Инструменты для бизнеса:</b> база знаний, шаблоны бизнес-планов, чек-листы документов, калькуляторы</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>ЕППБ · MVP</span><span>08</span></div>
+</section>
+
+<!-- 9. Интеграции -->
+<section class="slide">
+  <div class="kicker">Интеграционная готовность</div>
+  <h2>Мок-контуры повторяют реальные интеграции</h2>
+  <div class="cols">
+    <div class="col cardbox"><h3>eGov IDP</h3><p>Вход по OAuth-сценарию: в демо — имитация, в проде — idp.egov.kz. Профиль предзаполняет формы.</p></div>
+    <div class="col cardbox"><h3>ГБД «Юрлица» / «Физлица»</h3><p>Ввод БИН/ИИН → лукап через шину → название компании и ОКЭД подтянулись в заявку.</p></div>
+    <div class="col cardbox"><h3>BPM дочерних организаций</h3><p>Заявка передаётся оператору; обратный поток статусов виден в ЛК. ЕППБ не заменяет BPM — только клиентский путь.</p></div>
+    <div class="col cardbox"><h3>ЭЦП</h3><p>Подписание пакета документов II этапа — сценарий NCALayer / eGov mobile, зафиксировано в истории заявки.</p></div>
+  </div>
+  <p class="sub" style="margin-top: 26px;">Все интеграции изолированы в адаптерах <span style="font-family: monospace; font-size: 16px;">/api/integrations/*</span> — замена мока на реальную шину Холдинга не трогает ни конструктор, ни клиентский путь. CRM-функциональность не дублируем — портал стыкуется с единой CRM Холдинга.</p>
+  <div class="foot"><span>ЕППБ · MVP</span><span>09</span></div>
+</section>
+
+<!-- 10. Масштабируемость -->
+<section class="slide dark">
+  <div class="kicker">Масштабируемость и архитектура</div>
+  <h2>70+ услуг — это 70 записей в БД, а не 70 проектов</h2>
+  <div class="cols">
+    <div class="col cardbox"><div class="num">1 день</div><h3>запуск новой услуги</h3><p>Автор собирает схему (AI даёт черновик), проверяет в предпросмотре, публикует. Без релизов и деплоев.</p></div>
+    <div class="col cardbox"><div class="num">8</div><h3>дочерних организаций</h3><p>Мультиоператорность заложена в модель: услуга принадлежит организации, статусы приходят из её BPM.</p></div>
+    <div class="col cardbox"><div class="num">1</div><h3>движок схем</h3><p>Next.js 16 + общий движок условий/формул/валидации на клиенте и сервере. SQLite в MVP → PostgreSQL в проде заменой слоя данных.</p></div>
+  </div>
+  <ul class="big" style="margin-top: 28px;">
+    <li>Версионирование схем услуг — изменения без поломки поданных заявок</li>
+    <li>Роли следующего шага: автор услуги, модератор, оператор дочки, аналитик</li>
+    <li>Справочники (регионы, страны, ОКЭД) — данными, подключаются к любому полю</li>
+  </ul>
+  <div class="foot"><span>ЕППБ · MVP</span><span>10</span></div>
+</section>
+
+<!-- 11. Что в MVP -->
+<section class="slide">
+  <div class="kicker">Что уже работает — можно кликать</div>
+  <h2>Полный чек-лист конкурса закрыт</h2>
+  <div class="cols" style="margin-top: 28px; gap: 22px;">
+    <div class="col">
+      <ul class="big" style="margin-top: 0;">
+        <li>Главная: поиск, подбор, направления, быстрый вход</li>
+        <li>Каталог 8 услуг с фильтрами + карточка услуги</li>
+        <li>Wizard подачи: ветвления, расчёты, черновики, ГБД-лукап</li>
+        <li>Личный кабинет: заявки, статусы, история, уведомления, II этап</li>
+        <li>Админ-конструктор: 15 типов полей, условия, формулы, предпросмотр, публикация</li>
+      </ul>
+    </div>
+    <div class="col">
+      <ul class="big" style="margin-top: 0;">
+        <li>AI-помощник подбора + AI-генерация схем форм</li>
+        <li>Интерактивная карта: 25 проектов, фильтры, регионы</li>
+        <li>Каталог отчётности 8 организаций</li>
+        <li>Материалы: гиды, шаблоны, чек-листы, калькуляторы</li>
+        <li>Мок-интеграции: eGov IDP, ГБД, BPM-статусы, ЭЦП</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>ЕППБ · MVP</span><span>11</span></div>
+</section>
+
+<!-- 12. Финал -->
+<section class="slide dark" style="justify-content: center;">
+  <div class="kicker">Итог</div>
+  <h1 style="font-size: 46px; max-width: 1050px;">Портал, который отражает статус национального института развития — и масштабируется без программистов</h1>
+  <p class="sub" style="font-size: 20px; margin-top: 24px;">Предпринимателю — одно окно и понятный путь.<br>Холдингу — запуск новых мер поддержки за день, а не за квартал.</p>
+  <div style="margin-top: 40px;">
+    <span class="tag">Живое демо + исходный код приложены к заявке</span>
+  </div>
+  <div class="foot"><span>ЕППБ · Единый портал поддержки бизнеса</span><span>Astana Hub · 2026</span></div>
+</section>
+
+</body>
+</html>
