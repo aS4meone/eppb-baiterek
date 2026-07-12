@@ -182,6 +182,7 @@ export function Wizard({ service, stageIndex, profile, references, applicationId
                 data={data}
                 errors={errors}
                 references={references}
+                serviceTitle={service.title}
                 onChange={onChange}
               />
             </div>
@@ -230,6 +231,7 @@ function FieldRenderer({
   data,
   errors,
   references,
+  serviceTitle,
   onChange,
 }: {
   fieldId: string;
@@ -237,6 +239,7 @@ function FieldRenderer({
   data: FormData;
   errors: Record<string, string>;
   references: Record<string, { value: string; label: string }[]>;
+  serviceTitle: string;
   onChange: (id: string, value: unknown) => void;
 }) {
   const field = step.fields.find((f) => f.id === fieldId)!;
@@ -246,6 +249,7 @@ function FieldRenderer({
       data={data}
       error={errors[field.id]}
       options={field.reference ? references[field.reference] : undefined}
+      serviceTitle={serviceTitle}
       onChange={onChange}
     />
   );

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { BarChart3, CalendarDays, ExternalLink, FileText, LineChart, PieChart } from "lucide-react";
-import { listReports } from "@/lib/repo";
+import { listProjects, listReports } from "@/lib/repo";
+import { PortfolioCharts } from "./charts";
 
 export const metadata: Metadata = { title: "Аналитическая отчётность" };
 
@@ -24,7 +25,12 @@ export default function ReportsPage() {
         Материалы открываются на стороне источника или встраиваются в портал.
       </p>
 
-      <div className="mt-8 space-y-8">
+      <div className="mt-7">
+        <PortfolioCharts projects={listProjects()} />
+      </div>
+
+      <h2 className="mt-10 text-[17px] font-extrabold text-brand-950">Отчёты и материалы организаций</h2>
+      <div className="mt-4 space-y-8">
         {orgs.map((org) => (
           <section key={org}>
             <h2 className="mb-3.5 text-[15px] font-extrabold text-brand-900">{org}</h2>
