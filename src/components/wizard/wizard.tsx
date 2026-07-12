@@ -2,15 +2,17 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Check, Loader2, PenLine, Sparkles } from "lucide-react";
-import type { Service, Stage } from "@/lib/engine/types";
+import { ArrowLeft, ArrowRight, Check, ClipboardCheck, Loader2, PenLine, Pencil, Sparkles } from "lucide-react";
+import type { Field, Service, Stage } from "@/lib/engine/types";
 import {
+  evalFormula,
   stageProgress,
   validateStep,
   visibleFields,
   visibleSteps,
   type FormData,
 } from "@/lib/engine/logic";
+import { formatMoney } from "@/lib/format";
 
 interface Props {
   service: Service;
@@ -39,6 +41,7 @@ export function Wizard({ service, stageIndex, profile, references, applicationId
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [draftSavedAt, setDraftSavedAt] = useState<string | null>(null);
+  const [review, setReview] = useState(false);
 
   const steps = useMemo(() => visibleSteps(stage, data), [stage, data]);
   const step = steps[Math.min(stepIdx, steps.length - 1)];
@@ -87,8 +90,16 @@ export function Wizard({ service, stageIndex, profile, references, applicationId
       setStepIdx((i) => i + 1);
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
-      submit();
+      // экран-резюме перед отправкой — снижает ошибки и повышает доверие
+      setReview(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
+  }
+
+  function editStep(i: number) {
+    setReview(false);
+    setStepIdx(i);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   async function submit() {
@@ -123,29 +134,35 @@ export function Wizard({ service, stageIndex, profile, references, applicationId
           {steps.map((s, i) => (
             <button
               key={s.id}
-              onClick={() => i < stepIdx && setStepIdx(i)}
+              onClick={() => (review || i < stepIdx) && editStep(i)}
               className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-semibold transition ${
-                i === stepIdx
+                i === stepIdx && !review
                   ? "bg-brand-800 text-white shadow-sm"
-                  : i < stepIdx
-                    ? "text-brand-700 hover:bg-brand-50"
-                    : "cursor-default text-slate-400"
+                  : "text-brand-700 hover:bg-brand-50"
               }`}
             >
               <span
                 className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold ${
-                  i === stepIdx
+                  i === stepIdx && !review
                     ? "bg-white/15 text-gold-300"
-                    : i < stepIdx
-                      ? "bg-emerald-100 text-emerald-700"
-                      : "bg-slate-100 text-slate-400"
+                    : "bg-emerald-100 text-emerald-700"
                 }`}
               >
-                {i < stepIdx ? <Check size={12} strokeWidth={3} /> : i + 1}
+                {i < stepIdx || review ? <Check size={12} strokeWidth={3} /> : i + 1}
               </span>
               {s.title}
             </button>
           ))}
+          <div
+            className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-semibold ${
+              review ? "bg-brand-800 text-white shadow-sm" : "text-slate-400"
+            }`}
+          >
+            <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${review ? "bg-white/15 text-gold-300" : "bg-slate-100 text-slate-400"}`}>
+              <ClipboardCheck size={13} />
+            </span>
+            Проверка и отправка
+          </div>
 
           <div className="mt-5 rounded-xl border border-slate-200 bg-white p-3.5">
             <div className="mb-1.5 flex justify-between text-[11.5px] font-bold text-slate-500">
@@ -167,29 +184,35 @@ export function Wizard({ service, stageIndex, profile, references, applicationId
         </div>
       </aside>
 
-      {/* Текущий шаг */}
+      {/* Текущий шаг или экран проверки */}
       <section className="card p-6 sm:p-8">
-        <div className="mb-1 text-[12px] font-bold uppercase tracking-wide text-brand-400">
-          Шаг {stepIdx + 1} из {steps.length}
-        </div>
-        <h2 className="text-[22px] font-extrabold tracking-tight text-brand-950">{step.title}</h2>
-        {step.description && <p className="mt-1.5 text-[13.5px] leading-relaxed text-slate-500">{step.description}</p>}
-
-        <div className="mt-6 space-y-5">
-          {visibleFields(step, data).map((f) => (
-            <div key={f.id} className="animate-fade-up">
-              <FieldRenderer
-                fieldId={f.id}
-                step={step}
-                data={data}
-                errors={errors}
-                references={references}
-                serviceTitle={service.title}
-                onChange={onChange}
-              />
+        {review ? (
+          <ReviewPanel steps={steps} data={data} references={references} onEdit={editStep} />
+        ) : (
+          <>
+            <div className="mb-1 text-[12px] font-bold uppercase tracking-wide text-brand-400">
+              Шаг {stepIdx + 1} из {steps.length}
             </div>
-          ))}
-        </div>
+            <h2 className="text-[22px] font-extrabold tracking-tight text-brand-950">{step.title}</h2>
+            {step.description && <p className="mt-1.5 text-[13.5px] leading-relaxed text-slate-500">{step.description}</p>}
+
+            <div className="mt-6 space-y-5">
+              {visibleFields(step, data).map((f) => (
+                <div key={f.id} className="animate-fade-up">
+                  <FieldRenderer
+                    fieldId={f.id}
+                    step={step}
+                    data={data}
+                    errors={errors}
+                    references={references}
+                    serviceTitle={service.title}
+                    onChange={onChange}
+                  />
+                </div>
+              ))}
+            </div>
+          </>
+        )}
 
         {submitError && (
           <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-bold text-red-700">
@@ -199,14 +222,14 @@ export function Wizard({ service, stageIndex, profile, references, applicationId
 
         <div className="mt-8 flex items-center justify-between border-t border-slate-100 pt-6">
           <button
-            onClick={() => stepIdx > 0 && setStepIdx((i) => i - 1)}
-            disabled={stepIdx === 0}
+            onClick={() => (review ? setReview(false) : stepIdx > 0 && setStepIdx((i) => i - 1))}
+            disabled={!review && stepIdx === 0}
             className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-[13.5px] font-bold text-slate-500 transition hover:bg-slate-100 disabled:invisible"
           >
             <ArrowLeft size={16} /> Назад
           </button>
           <button
-            onClick={next}
+            onClick={review ? submit : next}
             disabled={submitting}
             className="flex items-center gap-2 rounded-xl bg-brand-800 px-6 py-3 text-[14px] font-bold text-white shadow-sm transition hover:bg-brand-700 disabled:opacity-60"
           >
@@ -214,9 +237,13 @@ export function Wizard({ service, stageIndex, profile, references, applicationId
               <>
                 <Loader2 size={16} className="animate-spin" /> Отправка…
               </>
-            ) : isLast ? (
+            ) : review ? (
               <>
                 <Sparkles size={16} /> {stageIndex > 0 ? "Подписать ЭЦП и отправить" : "Отправить заявку"}
+              </>
+            ) : isLast ? (
+              <>
+                <ClipboardCheck size={16} /> Проверить заявку
               </>
             ) : (
               <>
@@ -227,6 +254,76 @@ export function Wizard({ service, stageIndex, profile, references, applicationId
         </div>
       </section>
     </div>
+  );
+}
+
+/** Экран проверки: сводка всех введённых данных с расчётами перед отправкой */
+function ReviewPanel({
+  steps,
+  data,
+  references,
+  onEdit,
+}: {
+  steps: Step[];
+  data: FormData;
+  references: Record<string, { value: string; label: string }[]>;
+  onEdit: (i: number) => void;
+}) {
+  function display(f: Field): string {
+    if (f.type === "calc") {
+      const v = f.formula ? evalFormula(f.formula, data) : null;
+      return v !== null ? `${formatMoney(v)} ${f.unit ?? ""}`.trim() : "—";
+    }
+    const raw = data[f.id];
+    if (raw === undefined || raw === null || String(raw).trim() === "") return "—";
+    if (typeof raw === "boolean") return raw ? "Да" : "Нет";
+    const opts = f.options ?? (f.reference ? references[f.reference] : undefined);
+    const opt = opts?.find((o) => o.value === String(raw));
+    if (opt) return opt.label;
+    if (f.type === "money") return `${formatMoney(Number(raw))} ${f.unit ?? ""}`.trim();
+    return String(raw);
+  }
+
+  return (
+    <>
+      <div className="mb-1 flex items-center gap-2 text-[12px] font-bold uppercase tracking-wide text-brand-400">
+        <ClipboardCheck size={14} /> Последний шаг
+      </div>
+      <h2 className="text-[22px] font-extrabold tracking-tight text-brand-950">Проверьте заявку перед отправкой</h2>
+      <p className="mt-1.5 text-[13.5px] leading-relaxed text-slate-500">
+        Убедитесь, что всё верно. Любой раздел можно поправить — нажмите «Изменить».
+      </p>
+
+      <div className="mt-6 space-y-4">
+        {steps.map((s, i) => {
+          const fields = visibleFields(s, data).filter((f) => f.type !== "info");
+          if (!fields.length) return null;
+          return (
+            <div key={s.id} className="rounded-2xl border border-slate-200 p-4.5">
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="text-[14px] font-extrabold text-brand-950">{s.title}</h3>
+                <button
+                  onClick={() => onEdit(i)}
+                  className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[12px] font-bold text-brand-600 transition hover:bg-brand-50"
+                >
+                  <Pencil size={12} /> Изменить
+                </button>
+              </div>
+              <dl className="divide-y divide-slate-100">
+                {fields.map((f) => (
+                  <div key={f.id} className="flex justify-between gap-6 py-2">
+                    <dt className="text-[13px] text-slate-500">{f.label}</dt>
+                    <dd className={`text-right text-[13px] font-bold ${f.type === "calc" ? "text-brand-700" : "text-brand-950"}`}>
+                      {display(f)}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          );
+        })}
+      </div>
+    </>
   );
 }
 
