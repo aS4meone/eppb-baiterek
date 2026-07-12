@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ЕППБ — Единый портал поддержки бизнеса (MVP)
 
-## Getting Started
+MVP цифровой платформы «Единый портал поддержки бизнеса» холдинга «Байтерек» на базе
+**универсального no-code/low-code конструктора услуг**. Решение для технологического
+конкурса Astana Hub.
 
-First, run the development server:
+## Ключевая идея
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Услуга Холдинга — это **не код, а данные**. Каждая мера поддержки целиком описывается
+JSON-схемой: этапы → шаги → поля → условия видимости → расчётные формулы → документы.
+
+- **Клиентский wizard** (`src/components/wizard/`) рендерит любую услугу по её схеме:
+  пошаговый сценарий, ветвление, предзаполнение из eGov, live-расчёты, черновики.
+- **Админ-конструктор** (`src/app/admin/`) позволяет бизнес-аналитику собирать и менять
+  услуги без разработчика: палитра из 15 типов полей, панель свойств, условия «показывать
+  если», формулы, живой предпросмотр тем же движком, публикация в один клик.
+- Обе контрольные услуги («Приобретение вагонов в лизинг» — 2 этапа, «Агробизнес —
+  животноводство») собраны **именно в конструкторе**: это seed-записи в БД
+  (`src/lib/seed/services.ts`), а не страницы в коде. Захардкоженных форм в проекте нет.
+
+## Масштабирование на 70+ услуг
+
+Новая услуга = новая запись в таблице `services`. Ни одного деплоя:
+1. Автор создаёт услугу в конструкторе (или генерирует черновик схемы AI из текста НПА).
+2. Настраивает шаги, ветвления, расчёты, документы; проверяет в предпросмотре.
+3. Публикует — услуга мгновенно появляется в каталоге, поиске, AI-подборе и ЛК.
+
+Новые организации, справочники, роли и интеграции добавляются данными и адаптерами шины,
+а не переработкой портала.
+
+## Функциональность (чек-лист конкурса)
+
+| Модуль | Где смотреть |
+|---|---|
+| Главная страница, поиск, подбор | `/` |
+| Каталог и карточка услуги | `/services`, `/services/wagons_leasing` |
+| Клиентский путь подачи (wizard) | `/services/wagons_leasing/apply` |
+| Личный кабинет: заявки, статусы, документы, уведомления | `/cabinet` |
+| Многоэтапность: II этап после предодобрения | кнопка «Проверить статус» в заявке |
+| Админ-конструктор форм | `/admin` → любая услуга |
+| AI: подбор услуги (виджет) + генерация схемы формы | кнопка ✨ и «Сгенерировать AI» |
+| Аналитическая отчётность дочерних организаций | `/reports` |
+| Интерактивная карта проектов | `/map` |
+| Материалы и инструменты для бизнеса | `/materials` |
+| Имитация интеграций: eGov IDP, ГБД ЮЛ/ФЛ, BPM, ЭЦП | `src/app/api/integrations/` |
+
+## Архитектура
+
+- **Next.js 16** (App Router, RSC) — публичный портал, ЛК, админка и API в одном приложении.
+- **SQLite** (`node:sqlite`) + тонкий слой доступа `src/lib/repo.ts` — для MVP; в проде
+  заменяется на PostgreSQL без изменения остального кода. JSON-схемы услуг хранятся в БД.
+- **Движок схем** `src/lib/engine/` — общий для клиента и сервера: условия видимости,
+  безопасный вычислитель формул (собственный парсер, без eval), валидация. Серверная
+  валидация заявок повторяет клиентскую по той же схеме.
+- **AI-слой** `src/lib/ai.ts` — OpenAI (gpt-4o-mini) / Anthropic Claude через env-ключи,
+  с rule-based фолбэком: демо работает даже без ключей.
+- **Интеграции** — мок-эндпоинты, повторяющие контуры реальных: eGov IDP (OAuth),
+  ГБД «Юридические лица» (лукап по БИН при вводе), передача заявки в BPM дочерней
+  организации и обратный поток статусов, подписание ЭЦП.
+- **Карта** — Leaflet + CARTO basemap, агрегация по регионам, фильтры.
+
+```
+Предприниматель ──► Портал (Next.js) ──► Интеграционная шина (мок) ──► BPM дочек (мок)
+                        │                        │
+Автор услуги ──► Конструктор ──► services(JSON) ─┘      eGov IDP · ГБД · ЭЦП (мок)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Запуск
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+cp .env.example .env.local   # опционально: ключи AI
+pnpm dev                     # http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+БД создаётся и наполняется демо-данными автоматически при первом запуске (`data/eppb.db`).
 
-## Learn More
+### Docker
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+docker build -t eppb .
+docker run -p 3000:3000 -v eppb-data:/app/data --env-file .env.local eppb
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Демо-сценарий (5 минут)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Главная → строка подбора или AI-виджет: «Хочу купить 20 полувагонов».
+2. Карточка «Приобретение вагонов в лизинг» → «Подать заявку».
+3. Wizard: выбрать «Юрлицо», ввести БИН `180940012345` (сработает лукап в ГБД),
+   выбрать «Цистерны» (появится ветка про груз), ввести 20 вагонов × 25 000 000 ₸ —
+   расчёт аванса и финансирования обновится на лету.
+4. Отправить → личный кабинет: статус, история, уведомления.
+5. «Проверить статус» дважды → откроется II этап: документы + ЭЦП.
+6. `/admin` → «Приобретение вагонов в лизинг» → показать схему, предпросмотр,
+   «Сгенерировать AI» — вставить текст любой программы поддержки.
