@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import { ChevronRight, FileCheck2, PartyPopper } from "lucide-react";
-import { getApplication, getServiceById } from "@/lib/repo";
+import { getApplication, getDemoUser, getServiceById } from "@/lib/repo";
 import { allFields } from "@/lib/engine/logic";
 import { formatDateTime, formatMoney } from "@/lib/format";
 import { StatusBadge } from "@/components/status-badge";
@@ -19,7 +19,8 @@ export default async function ApplicationPage(props: {
   const { id } = await props.params;
   const { submitted } = await props.searchParams;
   const app = getApplication(Number(id));
-  if (!app) notFound();
+  // ownership: чужие заявки не видны даже с валидной сессией
+  if (!app || app.userId !== getDemoUser().id) notFound();
 
   const service = getServiceById(app.serviceId);
   const fields = service ? allFields(service.schema) : [];

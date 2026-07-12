@@ -3,7 +3,9 @@ import { notFound } from "next/navigation";
 import { ChevronRight } from "lucide-react";
 import { getService, getDemoUser, getReference, getApplication } from "@/lib/repo";
 import { allFields } from "@/lib/engine/logic";
+import { isUser } from "@/lib/auth";
 import { Wizard } from "@/components/wizard/wizard";
+import { EgovLogin } from "@/app/cabinet/login";
 
 /**
  * Страница подачи: универсальна для всех услуг и этапов.
@@ -17,6 +19,9 @@ export default async function ApplyPage(props: {
   const { stage: stageParam, app: appParam } = await props.searchParams;
   const service = getService(code);
   if (!service) notFound();
+
+  // подача заявки — только после входа через eGov
+  if (!(await isUser())) return <EgovLogin />;
 
   const stageIndex = Math.min(Number(stageParam ?? 0) || 0, service.schema.stages.length - 1);
   const stage = service.schema.stages[stageIndex];

@@ -41,11 +41,11 @@ export default function HomePage() {
         />
         <div className="relative mx-auto max-w-7xl px-4 pb-16 pt-14 sm:px-6 sm:pb-20 sm:pt-20">
           <div className="max-w-2xl">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-[12px] font-semibold text-slate-200">
-              <span className="h-1.5 w-1.5 rounded-full bg-gold-400" />
-              70+ мер поддержки восьми институтов развития — в одном окне
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-[11.5px] font-semibold text-slate-200 sm:text-[12px]">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-gold-400" />
+              70+ мер поддержки восьми институтов развития
             </div>
-            <h1 className="text-[34px] font-extrabold leading-[1.12] tracking-tight sm:text-[44px]">
+            <h1 className="text-[28px] font-extrabold leading-[1.12] tracking-tight sm:text-[44px]">
               Поддержка для вашего бизнеса —{" "}
               <span className="text-gold-400">без хождения по инстанциям</span>
             </h1>
@@ -57,7 +57,7 @@ export default function HomePage() {
               <HomeSearch />
             </div>
             <div className="mt-5 flex flex-wrap items-center gap-2 text-[12.5px] text-slate-400">
-              Например:
+              <span className="hidden sm:inline">Например:</span>
               {[
                 ["вагоны в лизинг", "/services/wagons_leasing"],
                 ["откормочная площадка", "/services/agro_animal"],

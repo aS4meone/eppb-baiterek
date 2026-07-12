@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getApplication, getDemoUser, getServiceById, pushNotification, updateApplication } from "@/lib/repo";
+import { isUser } from "@/lib/auth";
 import type { ApplicationStatus } from "@/lib/engine/types";
 
 /**
@@ -14,9 +15,13 @@ const FLOW: { from: ApplicationStatus; to: ApplicationStatus; title: string; com
 ];
 
 export async function POST(req: NextRequest) {
+  if (!(await isUser())) {
+    return NextResponse.json({ error: "Требуется авторизация" }, { status: 401 });
+  }
   const { applicationId } = await req.json();
   const app = getApplication(Number(applicationId));
-  if (!app) return NextResponse.json({ error: "Заявка не найдена" }, { status: 404 });
+  const owner = getDemoUser();
+  if (!app || app.userId !== owner.id) return NextResponse.json({ error: "Заявка не найдена" }, { status: 404 });
 
   const service = getServiceById(app.serviceId);
   const hasStage2 = (service?.schema.stages.length ?? 1) > 1;

@@ -134,16 +134,24 @@ export function getApplication(id: number): Application | null {
 export function createApplication(serviceId: number, userId: number, data: Record<string, unknown>): Application {
   const db = getDb();
   const now = new Date().toISOString();
-  const number = `BT-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 90000) + 10000)}`;
   const history: HistoryEntry[] = [
     { at: now, status: "submitted", title: "Заявка подана", actor: "Заявитель" },
     { at: now, status: "in_review", title: "Заявка передана в BPM-систему оператора", comment: "Через интеграционную шину Холдинга", actor: "ЕППБ" },
   ];
-  const res = db.prepare(
+  const stmt = db.prepare(
     `INSERT INTO applications (number, service_id, user_id, stage_index, status, data, documents, history, created_at, updated_at)
      VALUES (?, ?, ?, 0, 'in_review', ?, '[]', ?, ?, ?)`
-  ).run(number, serviceId, userId, JSON.stringify(data), JSON.stringify(history), now, now);
-  return getApplication(Number(res.lastInsertRowid))!;
+  );
+  // номер человекочитаемый и UNIQUE — при коллизии пробуем заново
+  for (let attempt = 0; ; attempt++) {
+    const number = `BT-${new Date().getFullYear()}-${String(Math.floor(Math.random() * 90000) + 10000)}`;
+    try {
+      const res = stmt.run(number, serviceId, userId, JSON.stringify(data), JSON.stringify(history), now, now);
+      return getApplication(Number(res.lastInsertRowid))!;
+    } catch (e) {
+      if (attempt >= 5 || !/UNIQUE/i.test(String(e))) throw e;
+    }
+  }
 }
 
 export function updateApplication(

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createApplication, getApplication, getDemoUser, getServiceById, pushNotification, updateApplication } from "@/lib/repo";
 import { validateStep, visibleSteps } from "@/lib/engine/logic";
+import { isUser } from "@/lib/auth";
 
 /**
  * Подача заявки. stageIndex 0 — новая заявка, stageIndex > 0 — данные
@@ -8,6 +9,9 @@ import { validateStep, visibleSteps } from "@/lib/engine/logic";
  * Валидация выполняется по той же схеме, что и на клиенте.
  */
 export async function POST(req: NextRequest) {
+  if (!(await isUser())) {
+    return NextResponse.json({ error: "Войдите через eGov, чтобы подать заявку" }, { status: 401 });
+  }
   const body = await req.json();
   const { serviceId, stageIndex = 0, applicationId, data } = body ?? {};
 
@@ -29,7 +33,7 @@ export async function POST(req: NextRequest) {
 
   if (stageIndex > 0 && applicationId) {
     const app = getApplication(Number(applicationId));
-    if (!app) return NextResponse.json({ error: "Заявка не найдена" }, { status: 404 });
+    if (!app || app.userId !== user.id) return NextResponse.json({ error: "Заявка не найдена" }, { status: 404 });
     const updated = updateApplication(
       app.id,
       { data: { ...app.data, ...data }, stageIndex, status: "stage2_submitted" },

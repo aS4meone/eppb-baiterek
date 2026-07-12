@@ -37,6 +37,7 @@ export function Wizard({ service, stageIndex, profile, references, applicationId
   const [stepIdx, setStepIdx] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [draftSavedAt, setDraftSavedAt] = useState<string | null>(null);
 
   const steps = useMemo(() => visibleSteps(stage, data), [stage, data]);
@@ -92,6 +93,7 @@ export function Wizard({ service, stageIndex, profile, references, applicationId
 
   async function submit() {
     setSubmitting(true);
+    setSubmitError(null);
     try {
       const res = await fetch("/api/applications", {
         method: "POST",
@@ -108,7 +110,7 @@ export function Wizard({ service, stageIndex, profile, references, applicationId
       localStorage.removeItem(draftKey);
       router.push(`/cabinet/applications/${result.id}?submitted=1`);
     } catch (e) {
-      alert(e instanceof Error ? e.message : "Ошибка отправки");
+      setSubmitError(e instanceof Error ? e.message : "Ошибка отправки — попробуйте ещё раз");
       setSubmitting(false);
     }
   }
@@ -188,6 +190,12 @@ export function Wizard({ service, stageIndex, profile, references, applicationId
             </div>
           ))}
         </div>
+
+        {submitError && (
+          <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-bold text-red-700">
+            {submitError}
+          </div>
+        )}
 
         <div className="mt-8 flex items-center justify-between border-t border-slate-100 pt-6">
           <button

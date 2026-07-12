@@ -398,9 +398,11 @@ export function Builder({ initial }: { initial: Service }) {
 function AiGenerateDialog({ onClose, onGenerated }: { onClose: () => void; onGenerated: (s: ServiceSchema) => void }) {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   async function generate() {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch("/api/ai/generate-schema", {
         method: "POST",
@@ -408,6 +410,10 @@ function AiGenerateDialog({ onClose, onGenerated }: { onClose: () => void; onGen
         body: JSON.stringify({ description: text }),
       });
       const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Не удалось сгенерировать схему");
+        return;
+      }
       if (data.schema) onGenerated(data.schema);
     } finally {
       setLoading(false);
@@ -435,6 +441,11 @@ function AiGenerateDialog({ onClose, onGenerated }: { onClose: () => void; onGen
         <p className="mt-2 text-[11.5px] leading-snug text-slate-400">
           AI построит шаги, поля, условия видимости и расчёты. Черновик заменит текущую схему — его можно доработать вручную.
         </p>
+        {error && (
+          <p className="mt-3 rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-[12.5px] font-bold text-red-700">
+            {error}
+          </p>
+        )}
         <div className="mt-5 flex justify-end gap-2">
           <button onClick={onClose} className="rounded-xl px-4 py-2.5 text-[13px] font-bold text-slate-500 transition hover:bg-slate-100">
             Отмена

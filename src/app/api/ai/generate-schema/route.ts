@@ -24,12 +24,20 @@ select/radio: +"options":[{"value":"...","label":"..."}].
 Ветвление: +"condition":{"field":"id","op":"eq","value":"..."} (op: eq|ne|gt|lt|in|notEmpty).
 Расчёт: type calc +"formula":"amount * 0.2" (id других полей), +"unit":"тенге".
 Подсказка-блок: type info +"content":"...".
-Разбей длинную анкету на 2-4 шага по смыслу. Скрывай нерелевантные поля условиями. Добавь checkbox согласия в конце.`;
+Разбей длинную анкету на 2-4 шага по смыслу. Скрывай нерелевантные поля условиями. Добавь checkbox согласия в конце.
+Если входной текст НЕ похож на описание услуги, меры поддержки или программы (бессмысленный набор символов, спам, посторонняя тема) — верни {"error":"not_a_service"}.`;
 
     const raw = await askLLM(system, description, 4096);
     if (raw) {
       try {
-        const schema = sanitizeSchema(JSON.parse(raw.slice(raw.indexOf("{"), raw.lastIndexOf("}") + 1)));
+        const parsed = JSON.parse(raw.slice(raw.indexOf("{"), raw.lastIndexOf("}") + 1));
+        if (parsed.error) {
+          return NextResponse.json(
+            { error: "Текст не похож на описание услуги. Вставьте условия программы поддержки: кто может получить, суммы, ставки, документы." },
+            { status: 422 }
+          );
+        }
+        const schema = sanitizeSchema(parsed);
         if (schema.stages.length) return NextResponse.json({ schema, engine: "llm" });
       } catch {}
     }

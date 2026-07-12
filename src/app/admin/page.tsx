@@ -3,13 +3,16 @@ import Link from "next/link";
 import { FileStack, Hammer, Inbox, Plus } from "lucide-react";
 import { listAllApplications, listServices } from "@/lib/repo";
 import { formatDateTime } from "@/lib/format";
+import { isAdmin } from "@/lib/auth";
 import { StatusBadge } from "@/components/status-badge";
 import { STATUS_LABELS } from "@/lib/engine/types";
 import { AdminServiceActions, CreateServiceButton } from "./actions";
+import { AdminLogin } from "./login";
 
 export const metadata: Metadata = { title: "Административный кабинет" };
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  if (!(await isAdmin())) return <AdminLogin />;
   const services = listServices({ includeUnpublished: true });
   const applications = listAllApplications();
 
