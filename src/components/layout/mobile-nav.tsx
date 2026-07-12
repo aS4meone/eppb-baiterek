@@ -3,16 +3,20 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { LangSwitch } from "./lang-switch";
+import type { Locale } from "@/lib/i18n";
 
 interface Props {
   items: { href: string; label: string }[];
+  staffLabel: string;
+  locale: Locale;
 }
 
-export function MobileNav({ items }: Props) {
+export function MobileNav({ items, staffLabel, locale }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="md:hidden">
+    <div className="lg:hidden">
       <button
         onClick={() => setOpen(!open)}
         aria-label="Меню"
@@ -38,8 +42,11 @@ export function MobileNav({ items }: Props) {
               onClick={() => setOpen(false)}
               className="block rounded-xl px-4 py-3 text-[13px] font-semibold text-slate-400 transition hover:bg-slate-100"
             >
-              Для сотрудников
+              {staffLabel}
             </Link>
+            <div className="px-4 pt-2 sm:hidden">
+              <LangSwitch locale={locale} />
+            </div>
           </nav>
         </div>
       )}

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ADMIN_COOKIE, adminPassword } from "@/lib/auth";
+import { ADMIN_COOKIE, adminPassword, signSession } from "@/lib/auth";
 
 /** Вход администратора. В проде — корпоративный SSO Холдинга. */
 export async function POST(req: NextRequest) {
@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Неверный пароль" }, { status: 401 });
   }
   const res = NextResponse.json({ ok: true });
-  res.cookies.set(ADMIN_COOKIE, "1", { httpOnly: true, sameSite: "lax", path: "/", maxAge: 60 * 60 * 12 });
+  res.cookies.set(ADMIN_COOKIE, signSession("admin"), { httpOnly: true, sameSite: "lax", path: "/", maxAge: 60 * 60 * 12 });
   return res;
 }
 

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { cookies } from "next/headers";
 import { ArrowRight, Bell, FileText, Inbox, User2 } from "lucide-react";
 import { getDemoUser, listApplications, listNotifications } from "@/lib/repo";
+import { isUser } from "@/lib/auth";
 import { EgovLogin } from "./login";
 import { StatusBadge } from "@/components/status-badge";
 import { formatDateTime } from "@/lib/format";
@@ -10,8 +10,7 @@ import { formatDateTime } from "@/lib/format";
 export const metadata: Metadata = { title: "Личный кабинет" };
 
 export default async function CabinetPage() {
-  const authed = (await cookies()).get("eppb_session")?.value === "1";
-  if (!authed) return <EgovLogin />;
+  if (!(await isUser())) return <EgovLogin />;
 
   const user = getDemoUser();
   const applications = listApplications(user.id);

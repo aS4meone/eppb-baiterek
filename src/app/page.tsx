@@ -15,15 +15,16 @@ import {
 import { listServices } from "@/lib/repo";
 import { ServiceCard } from "@/components/service-card";
 import { HomeSearch } from "@/components/home-search";
+import { getLocale, makeT } from "@/lib/i18n";
 
-const DIRECTIONS = [
-  { icon: Wallet, title: "Кредитование", text: "Оборотные средства и инвестиционные займы" },
-  { icon: Building2, title: "Лизинг", text: "Техника, вагоны, оборудование" },
-  { icon: ShieldCheck, title: "Гарантии и страхование", text: "Покрытие залога и экспортных рисков" },
-  { icon: Landmark, title: "Жильё", text: "Жилстройсбережения и ипотека" },
-];
-
-export default function HomePage() {
+export default async function HomePage() {
+  const t = makeT(await getLocale());
+  const DIRECTIONS = [
+    { icon: Wallet, title: t("home.dir.credit"), text: t("home.dir.creditT") },
+    { icon: Building2, title: t("home.dir.leasing"), text: t("home.dir.leasingT") },
+    { icon: ShieldCheck, title: t("home.dir.guarantee"), text: t("home.dir.guaranteeT") },
+    { icon: Landmark, title: t("home.dir.housing"), text: t("home.dir.housingT") },
+  ];
   const services = listServices();
   const popular = services.filter((s) => s.isPopular).slice(0, 3);
   const rest = services.filter((s) => !s.isPopular).slice(0, 3);
@@ -43,21 +44,18 @@ export default function HomePage() {
           <div className="max-w-2xl">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-[11.5px] font-semibold text-slate-200 sm:text-[12px]">
               <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-gold-400" />
-              70+ мер поддержки восьми институтов развития
+              {t("home.badge")}
             </div>
             <h1 className="text-[28px] font-extrabold leading-[1.12] tracking-tight sm:text-[44px]">
-              Поддержка для вашего бизнеса —{" "}
-              <span className="text-gold-400">без хождения по инстанциям</span>
+              {t("home.h1a")}{" "}
+              <span className="text-gold-400">{t("home.h1b")}</span>
             </h1>
-            <p className="mt-4 max-w-xl text-[15.5px] leading-relaxed text-slate-300">
-              Найдите меру поддержки, подайте заявку онлайн и отслеживайте её статус в едином
-              личном кабинете. Кредиты, лизинг, гарантии, страхование экспорта и жильё.
-            </p>
+            <p className="mt-4 max-w-xl text-[15.5px] leading-relaxed text-slate-300">{t("home.lead")}</p>
             <div className="mt-7">
-              <HomeSearch />
+              <HomeSearch placeholder={t("home.searchPlaceholder")} buttonLabel={t("home.searchBtn")} />
             </div>
             <div className="mt-5 flex flex-wrap items-center gap-2 text-[12.5px] text-slate-400">
-              <span className="hidden sm:inline">Например:</span>
+              <span className="hidden sm:inline">{t("home.example")}</span>
               {[
                 ["вагоны в лизинг", "/services/wagons_leasing"],
                 ["откормочная площадка", "/services/agro_animal"],
@@ -101,14 +99,14 @@ export default function HomePage() {
       <section className="mx-auto max-w-7xl px-4 pt-14 sm:px-6">
         <div className="mb-5 flex items-end justify-between">
           <div>
-            <h2 className="text-[24px] font-extrabold tracking-tight text-brand-950">Меры поддержки</h2>
-            <p className="mt-1 text-[13.5px] text-slate-500">Популярные услуги группы Холдинга</p>
+            <h2 className="text-[24px] font-extrabold tracking-tight text-brand-950">{t("home.services")}</h2>
+            <p className="mt-1 text-[13.5px] text-slate-500">{t("home.servicesSub")}</p>
           </div>
           <Link
             href="/services"
             className="flex items-center gap-1.5 rounded-xl bg-brand-50 px-4 py-2.5 text-[13px] font-bold text-brand-700 transition hover:bg-brand-100"
           >
-            Весь каталог <ArrowRight size={15} />
+            {t("home.allCatalog")} <ArrowRight size={15} />
           </Link>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -121,13 +119,13 @@ export default function HomePage() {
       {/* Как это работает */}
       <section className="mx-auto max-w-7xl px-4 pt-16 sm:px-6">
         <div className="card overflow-hidden bg-brand-900 p-8 text-white sm:p-10">
-          <h2 className="text-[22px] font-extrabold tracking-tight">Как получить поддержку</h2>
+          <h2 className="text-[22px] font-extrabold tracking-tight">{t("home.how")}</h2>
           <div className="mt-7 grid gap-8 sm:grid-cols-4">
             {[
-              { n: "01", icon: MessageSquareText, t: "Подберите услугу", d: "Поиск, каталог или AI-помощник подскажут подходящую меру" },
-              { n: "02", icon: FileCheck2, t: "Подайте заявку", d: "Пошаговая форма с подсказками, данные подтянутся из eGov" },
-              { n: "03", icon: LayoutGrid, t: "Следите за статусом", d: "Все заявки, документы и уведомления — в одном кабинете" },
-              { n: "04", icon: ShieldCheck, t: "Получите результат", d: "Подписание договора ЭЦП онлайн, без визита в офис" },
+              { n: "01", icon: MessageSquareText, t: t("home.how1"), d: t("home.how1d") },
+              { n: "02", icon: FileCheck2, t: t("home.how2"), d: t("home.how2d") },
+              { n: "03", icon: LayoutGrid, t: t("home.how3"), d: t("home.how3d") },
+              { n: "04", icon: ShieldCheck, t: t("home.how4"), d: t("home.how4d") },
             ].map((s) => (
               <div key={s.n}>
                 <div className="flex items-center gap-3">
@@ -148,30 +146,23 @@ export default function HomePage() {
           <Link href="/map" className="card card-hover group p-6">
             <Map size={22} className="text-brand-500" />
             <h3 className="mt-3.5 text-[16.5px] font-extrabold text-brand-950 group-hover:text-brand-700">
-              Карта проектов
+              {t("home.map")}
             </h3>
-            <p className="mt-1.5 text-[13px] leading-relaxed text-slate-500">
-              25+ проектов, профинансированных группой Холдинга, — на интерактивной карте Казахстана с
-              фильтрами по отраслям и регионам.
-            </p>
+            <p className="mt-1.5 text-[13px] leading-relaxed text-slate-500">{t("home.mapD")}</p>
           </Link>
           <Link href="/reports" className="card card-hover group p-6">
             <BarChart3 size={22} className="text-brand-500" />
             <h3 className="mt-3.5 text-[16.5px] font-extrabold text-brand-950 group-hover:text-brand-700">
-              Аналитика и отчётность
+              {t("home.reports")}
             </h3>
-            <p className="mt-1.5 text-[13px] leading-relaxed text-slate-500">
-              Годовые отчёты, дашборды и исследования Холдинга и дочерних организаций в одном каталоге.
-            </p>
+            <p className="mt-1.5 text-[13px] leading-relaxed text-slate-500">{t("home.reportsD")}</p>
           </Link>
           <Link href="/materials" className="card card-hover group p-6">
             <BookOpen size={22} className="text-brand-500" />
             <h3 className="mt-3.5 text-[16.5px] font-extrabold text-brand-950 group-hover:text-brand-700">
-              Инструменты для бизнеса
+              {t("home.materials")}
             </h3>
-            <p className="mt-1.5 text-[13px] leading-relaxed text-slate-500">
-              База знаний, шаблоны бизнес-планов, чек-листы документов и калькуляторы — бесплатно.
-            </p>
+            <p className="mt-1.5 text-[13px] leading-relaxed text-slate-500">{t("home.materialsD")}</p>
           </Link>
         </div>
       </section>

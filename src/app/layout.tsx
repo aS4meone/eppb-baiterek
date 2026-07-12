@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { AiAssistant } from "@/components/ai/assistant";
 import { seedIfEmpty } from "@/lib/seed";
+import { getLocale } from "@/lib/i18n";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -20,10 +21,11 @@ export const metadata: Metadata = {
     "Единая цифровая точка входа к мерам поддержки бизнеса холдинга «Байтерек»: кредитование, лизинг, гарантирование, страхование экспорта и жилищные программы.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   seedIfEmpty();
+  const locale = await getLocale();
   return (
-    <html lang="ru" className={`${manrope.variable} h-full`}>
+    <html lang={locale} className={`${manrope.variable} h-full`}>
       <body className="font-sans flex min-h-full flex-col">
         <Header />
         <main className="flex-1">{children}</main>

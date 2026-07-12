@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Search, Sparkles } from "lucide-react";
 
-export function HomeSearch() {
+export function HomeSearch({ placeholder, buttonLabel }: { placeholder: string; buttonLabel: string }) {
   const router = useRouter();
   const [q, setQ] = useState("");
 
@@ -20,7 +20,7 @@ export function HomeSearch() {
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Чем занимается ваш бизнес?"
+          placeholder={placeholder}
           className="w-full rounded-2xl border border-white/15 bg-white/10 py-3.5 pl-11 pr-4 text-[14px] text-white outline-none backdrop-blur placeholder:text-slate-400 focus:border-gold-400/60 focus:bg-white/15"
         />
       </div>
@@ -29,7 +29,7 @@ export function HomeSearch() {
         className="flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-gold-500 px-5 py-3.5 text-[14px] font-extrabold text-brand-950 transition hover:bg-gold-400"
       >
         <Sparkles size={16} />
-        Подобрать
+        {buttonLabel}
       </button>
     </form>
   );

@@ -12,8 +12,11 @@ export async function POST(req: NextRequest) {
   if (!(await isUser())) {
     return NextResponse.json({ error: "Войдите через eGov, чтобы подать заявку" }, { status: 401 });
   }
-  const body = await req.json();
-  const { serviceId, stageIndex = 0, applicationId, data } = body ?? {};
+  const body = await req.json().catch(() => null);
+  if (!body || typeof body !== "object") {
+    return NextResponse.json({ error: "Некорректное тело запроса" }, { status: 400 });
+  }
+  const { serviceId, stageIndex = 0, applicationId, data } = body;
 
   const service = getServiceById(Number(serviceId));
   if (!service) return NextResponse.json({ error: "Услуга не найдена" }, { status: 404 });

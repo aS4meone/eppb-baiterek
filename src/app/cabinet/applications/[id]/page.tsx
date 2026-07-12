@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { cookies } from "next/headers";
 import { ChevronRight, FileCheck2, PartyPopper } from "lucide-react";
 import { getApplication, getDemoUser, getServiceById } from "@/lib/repo";
+import { isUser } from "@/lib/auth";
 import { allFields } from "@/lib/engine/logic";
 import { formatDateTime, formatMoney } from "@/lib/format";
 import { StatusBadge } from "@/components/status-badge";
@@ -13,8 +13,7 @@ export default async function ApplicationPage(props: {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ submitted?: string }>;
 }) {
-  const authed = (await cookies()).get("eppb_session")?.value === "1";
-  if (!authed) return <EgovLogin />;
+  if (!(await isUser())) return <EgovLogin />;
 
   const { id } = await props.params;
   const { submitted } = await props.searchParams;
