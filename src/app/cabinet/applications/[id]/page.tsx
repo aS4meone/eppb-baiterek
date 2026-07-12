@@ -58,7 +58,7 @@ export default async function ApplicationPage(props: {
       </p>
 
       {stage2Available && (
-        <div className="card mt-6 flex flex-wrap items-center gap-4 border border-violet-200 bg-violet-50/60 p-5">
+        <div className="mt-6 flex flex-wrap items-center gap-4 rounded-2xl border border-violet-200 bg-violet-50/60 p-5 shadow-[var(--shadow-card)]">
           <div className="flex-1">
             <div className="text-[15px] font-extrabold text-brand-950">Открыт II этап — полная заявка</div>
             <p className="mt-1 text-[13px] leading-relaxed text-slate-600">

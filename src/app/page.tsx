@@ -75,7 +75,7 @@ export default async function HomePage() {
       </section>
 
       {/* Направления */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6">
+      <section className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6">
         <div className="-mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {DIRECTIONS.map((d) => (
             <Link
@@ -118,7 +118,7 @@ export default async function HomePage() {
 
       {/* Как это работает */}
       <section className="mx-auto max-w-7xl px-4 pt-16 sm:px-6">
-        <div className="card overflow-hidden bg-brand-900 p-8 text-white sm:p-10">
+        <div className="overflow-hidden rounded-2xl bg-brand-900 p-8 text-white shadow-[var(--shadow-card)] sm:p-10">
           <h2 className="text-[22px] font-extrabold tracking-tight">{t("home.how")}</h2>
           <div className="mt-7 grid gap-8 sm:grid-cols-4">
             {[

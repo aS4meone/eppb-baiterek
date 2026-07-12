@@ -69,7 +69,7 @@ export default async function ServicePage(props: { params: Promise<{ code: strin
             ))}
           </div>
 
-          <div className="card mt-6 flex items-start gap-3.5 border border-brand-100 bg-brand-50/60 p-5">
+          <div className="mt-6 flex items-start gap-3.5 rounded-2xl border border-brand-100 bg-brand-50/60 p-5">
             <Users2 size={18} className="mt-0.5 shrink-0 text-brand-500" />
             <div className="text-[13px] leading-relaxed text-slate-600">
               <span className="font-bold text-brand-900">Кому подходит: </span>
